@@ -1,13 +1,16 @@
 #pragma once
-#include "tObject.h"
+#include "tObject.cpp"
 #include "Sphere.h"
-using namespace std;
+
 
 class Ray {
 public:
-	
+	Ray(v3d&, v3d&);
+	bool intersect(Sphere&);
+
 private:
 	// equation
-	double direction[3];
+	v3d direction, position, math_v;
 
-}
+
+};

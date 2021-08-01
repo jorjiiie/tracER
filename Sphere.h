@@ -1,14 +1,17 @@
 #pragma once
 #include <iostream>
-#include "tObject.h"
+#include "tObject.cpp"
 
 // light is just sphere but with big
-using namespace std;
+
 
 class Sphere : public tObject {
 public:
 	Sphere();
-	Sphere(double, double);
+	Sphere(double, double, double, double);
+	Sphere(v3d&, double);
+private:
+	double radius;
 
-		
+	friend class Ray;
 };

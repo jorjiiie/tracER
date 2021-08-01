@@ -1,3 +1,8 @@
 *.out
 *.ppm
 
+.DS_Store
+.AppleDouble
+.LSOverride
+a.out.dSYM/
+

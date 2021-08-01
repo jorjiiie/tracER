@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
-#include "tObject.h"
+#include "tObject.cpp"
+#include "Ray.cpp"
 
-using namespace std;
 
 struct pix {
 	int r,g,b;
