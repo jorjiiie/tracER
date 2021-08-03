@@ -36,7 +36,16 @@ struct v3d {
 		this->z += o.z;
 		return *this;
 	}
-
+	v3d operator-(v3d& o) {
+		v3d tmp = *this;
+		return tmp -= o;
+	}
+	v3d& operator-=(v3d& o) {
+		this->x -= o.x;
+		this->y -= o.y;
+		this->z -= o.z;
+		return *this;
+	}
 	double operator*(v3d& o) {
 		return this->x * o.x + this->y * o.y + this->z * o.z;
 	}

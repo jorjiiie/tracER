@@ -5,8 +5,7 @@
 Ray::Ray(v3d& pos, v3d& dir) {
 	position = pos;
 	direction = dir;
-	math_v = pos;
-	math_v += dir;
+
 }
 
 bool Ray::intersect(Sphere& s) {
@@ -15,10 +14,12 @@ bool Ray::intersect(Sphere& s) {
 		solving directly using parametric
 		t = -(v * d) +/- sqrt((v*d) - (v^2 - r^2))
 	*/
+	v3d math_v = position;
+	math_v -= s.position;
 
 	double front = - (math_v * direction);
 
-	double inside = -front - (math_v * math_v - s.radius * s.radius);
+	double inside = front*front - (math_v * math_v - s.radius * s.radius);
 
 	if (inside < 0) return false;
 
