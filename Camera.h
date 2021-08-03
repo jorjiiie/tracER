@@ -6,25 +6,18 @@
 
 struct pix {
 	int r,g,b;
-}
+};
+
 class Camera : public tObject {
 
-public:
+public: // all public because used by Scene and I'm not using get/set for everything
 	Camera();
-	Camera(double, double);
-	// default i have no idea how many samples
-	vector<vector<pix> > render();
-	// int for # samples
-	vector<vector<pix> > render(int);
+	Camera(int, int, v3d, v3d, double);
 
-	// i dont know what else i need
-private:
-	int width,length;
+	int width, height;
 	// unit vector that points up (analagous to rotation but makes it ez for computation <3)
-	v3d up;
+	v3d up, direction;
 
-	// how do i do the projection thing
-	// its like camera at a point and then project a rectangle forwards and shoot rays through it
-	// for each px shoot #SAMPLES rays and average the brightness for rgb
-		
+	// how wide the shot is
+	double angle;		
 };
