@@ -19,4 +19,7 @@ Sphere::Sphere(v3d& coords, double r) {
 	position = coords;
 	radius = r;	
 }
+double Sphere::get_radius() {
+	return radius;
+}
 

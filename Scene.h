@@ -13,13 +13,13 @@
 #include "Sphere.cpp"
 
 #define PI 3.14159265
-
+#define SAMPLES 100
 
 class Scene {
 
 public:
 	Scene();
-	Scene(Camera, std::vector<tObject>&);
+	Scene(Camera, std::vector<tObject*>);
 	void render();
 	tObject closest_intersection(Ray);
 	pix trace(Ray, int);
@@ -28,5 +28,5 @@ private:
 
 	// i guess we just have lights in here + others
 	// lights are just emissive things uwu
-	std::vector<tObject> scene_objects;
+	std::vector<tObject*> scene_objects;
 };

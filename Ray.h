@@ -7,7 +7,7 @@ class Ray {
 public:
 	Ray();
 	Ray(v3d&, v3d&);
-	bool intersect(Sphere&);
+	bool intersect(const Sphere&);
 
 private:
 	// equation

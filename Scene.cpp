@@ -5,7 +5,7 @@
 Scene::Scene() {
 	// hello
 }
-Scene::Scene(Camera c, std::vector<tObject>& objs) {
+Scene::Scene(Camera c, std::vector<tObject*> objs) {
 	cam = c;
 	scene_objects = objs;
 
@@ -15,9 +15,10 @@ void Scene::render() {
 	// output to file & image initialization
 	std::ofstream out;
 	out.open("output/test.ppm");
-	out << "P3 " << cam.width << " " << cam.height << "255\n";
+	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
 	pix img[cam.width+2][cam.height+2];
+
 
 	memset(img,0,sizeof(img));
 
@@ -28,7 +29,7 @@ void Scene::render() {
 	// center of the scene, and is 69 units away from the camera for no reason whatsoever
 	// it doesn't make a difference bc the ray intersection doesn't matter for magnitude
 	// will just have bigger numbers :c
-	v3d center_scene = cam.direction * 69;
+	v3d center_scene = cam.position + cam.direction * 69;
 
 	// delta x,y,z per pixel sideways
 	// for a pixel, moving right 1 pix is + d_pix
@@ -76,18 +77,42 @@ void Scene::render() {
 	}
 
 
+	
+	// debugging
 	/*
-	debugging
 	std::cerr << d_pix << " " << d_up << " " << width << " " << lower_left;
 	std::cerr << "\n";
 	for (int i=0;i<cam.height;i++) {
 		std::cerr << "ROW " << i << ": ";
 		for (int j=0;j<cam.width;j++) {
-			std::cerr << points[j][i] << " ";
+			v3d tmp = points[j][i];
+			std::cerr << tmp<< " ";
 		}
 		std::cerr << "\n";
 	}
-	*/
+	//*/
+	for (int i=0;i<cam.width;i++) {
+		for (int j=0;j<cam.height;j++) {
+			for (int k = 0; k < SAMPLES; k++) {
+				v3d ray_vec = points[j][i] - cam.position + d_pix * (rand() * 1.0 / RAND_MAX * 2 - 1) + d_up * (rand() * 1.0 / RAND_MAX * 2 - 1);
+				ray_vec.to_unit();
+				Ray current(cam.position,ray_vec);
+				for (tObject* o : scene_objects) {
+					// since its reference it wont slice it pray
+					// it slices :(
+					Sphere* tmp_s = static_cast<Sphere*>(o);
+					if (current.intersect(*tmp_s)) {
+						img[i][j].r+=255;
+						img[i][j].g+=255;
+						img[i][j].b+=255;
+					}
+				}
+			}
+			img[i][j].r /= SAMPLES;
+			img[i][j].g /= SAMPLES;
+			img[i][j].b /= SAMPLES;
+		}
+	}
 
 	for (int i=0;i<cam.height;i++)
 		for (int j=0;j<cam.width;j++)

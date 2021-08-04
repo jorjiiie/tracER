@@ -76,13 +76,14 @@ struct v3d {
 		return cp;
 	}
 
-	void to_unit() {
+	v3d& to_unit() {
 		double magnitude = std::sqrt(x*x + y*y + z*z);
 		// needs to divide everything by sqrt magnitude
 
 		x /= magnitude;
 		y /= magnitude;
 		z /= magnitude;
+		return *this;
 	}
 
 };
