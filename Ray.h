@@ -1,17 +1,15 @@
 #pragma once
-#include "tObject.cpp"
-#include "Sphere.h"
-
+#include "v3d.h"
 
 class Ray {
 public:
+
 	Ray();
 	Ray(v3d&, v3d&);
-	bool intersect(const Sphere&);
 
+	v3d get_position() const;
+	v3d get_direction() const;
 private:
 	// equation
 	v3d direction, position;
-
-
 };

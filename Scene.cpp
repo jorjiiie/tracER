@@ -14,14 +14,23 @@ void Scene::render() {
 
 	// output to file & image initialization
 	std::ofstream out;
-	out.open("output/test.ppm");
+	out.open("output/test3.ppm");
 	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
-	pix img[cam.width+2][cam.height+2];
 
+	// both of these should be switched but i can't be bothered now
+	// cache friendly would be other way aroudn LOL but its fine for now
+	// we get to do some testing later
+	std::vector<pix> img[cam.width];
+	for (std::vector<pix>& v : img) {
+		v.resize(cam.height);
+	}
 
-	memset(img,0,sizeof(img));
-
+	// projected big triangle points
+	std::vector<v3d> points[cam.width];
+	for (std::vector<v3d>& v : points) {
+		v.resize(cam.height);
+	}
 	// now project a big rectangle through camera and shoot rays through the pixels
 	// will have multiple samples per pixel eventually but for now...
 	// single shot straight through <3
@@ -55,7 +64,6 @@ void Scene::render() {
 	v3d lower_left = center_scene - (d_pix * (cam.width/2)) - (d_up * (cam.height/2));
 
 
-	v3d points[cam.width][cam.height];
 	
 	points[0][cam.height-1]=lower_left;
 
@@ -91,6 +99,7 @@ void Scene::render() {
 		std::cerr << "\n";
 	}
 	//*/
+	// should flip samples first for progressive sampling for non speed but look at difference
 	for (int i=0;i<cam.width;i++) {
 		for (int j=0;j<cam.height;j++) {
 			for (int k = 0; k < SAMPLES; k++) {
@@ -100,8 +109,7 @@ void Scene::render() {
 				for (tObject* o : scene_objects) {
 					// since its reference it wont slice it pray
 					// it slices :(
-					Sphere* tmp_s = static_cast<Sphere*>(o);
-					if (current.intersect(*tmp_s)) {
+					if (o->intersect(current)) {
 						img[i][j].r+=255;
 						img[i][j].g+=255;
 						img[i][j].b+=255;

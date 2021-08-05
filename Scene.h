@@ -13,7 +13,7 @@
 #include "Sphere.cpp"
 
 #define PI 3.14159265
-#define SAMPLES 100
+#define SAMPLES 50
 
 class Scene {
 
@@ -21,7 +21,7 @@ public:
 	Scene();
 	Scene(Camera, std::vector<tObject*>);
 	void render();
-	tObject closest_intersection(Ray);
+	tObject* closest_intersection(Ray);
 	pix trace(Ray, int);
 private:
 	Camera cam;

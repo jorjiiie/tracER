@@ -11,8 +11,7 @@ public:
 	Sphere(double, double, double, double);
 	Sphere(v3d&, double);
 	double get_radius();
+	bool intersect(const Ray&);
 private:
 	double radius;
-
-	friend class Ray;
 };

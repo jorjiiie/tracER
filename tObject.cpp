@@ -5,3 +5,7 @@
 tObject::tObject() {
 	
 }
+
+bool tObject::intersect(const Ray& r) {
+	return false;
+}
