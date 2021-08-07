@@ -17,7 +17,8 @@ public:
 	tObject();
 	tObject(double, double);
 	void transform(int, int, int);
-	virtual bool intersect(const Ray&);
+	virtual bool intersect(const Ray&, double&);
+	virtual v3d get_normal(const v3d&);
 protected:
 	v3d position,rotation;
 };

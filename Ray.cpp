@@ -9,10 +9,3 @@ Ray::Ray(v3d& pos, v3d& dir) {
 	direction = dir;
 
 }
-
-v3d Ray::get_position() const {
-	return position;
-}
-v3d Ray::get_direction() const {
-	return direction;
-}

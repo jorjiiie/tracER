@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 #include <iostream>
-
+// idk if this should be a .h or .cpp LOL but its fine
 
 struct v3d {
 	double x,y,z;
@@ -29,7 +29,7 @@ struct v3d {
 	}
 
 
-	v3d operator+(const v3d& o) {
+	v3d operator+(const v3d& o) const {
 		v3d tmp = *this;
 		return tmp += o;
 	}
@@ -39,7 +39,7 @@ struct v3d {
 		this->z += o.z;
 		return *this;
 	}
-	v3d operator-(const v3d& o) {
+	v3d operator-(const v3d& o) const {
 		v3d tmp = *this;
 		return tmp -= o;
 	}
@@ -51,11 +51,11 @@ struct v3d {
 	}	
 
 
-	double operator*(v3d& o) {
+	double operator*(const v3d& o) const {
 		return this->x * o.x + this->y * o.y + this->z * o.z;
 	}
 
-	v3d operator*(double x) {
+	v3d operator*(double x) const {
 		v3d tmp = *this;
 		return tmp *= x;
 	}
@@ -76,7 +76,7 @@ struct v3d {
 		return cp;
 	}
 
-	v3d& to_unit() {
+	v3d& normalize() {
 		double magnitude = std::sqrt(x*x + y*y + z*z);
 		// needs to divide everything by sqrt magnitude
 
@@ -85,6 +85,12 @@ struct v3d {
 		z /= magnitude;
 		return *this;
 	}
+	v3d project(const v3d& o) {
+		// projection what else is there
+		v3d tmp = o;
+		return tmp*((*this * o)/(o*o));
+	}
+
 
 };
 

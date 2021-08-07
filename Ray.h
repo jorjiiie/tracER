@@ -9,7 +9,6 @@ public:
 
 	v3d get_position() const;
 	v3d get_direction() const;
-private:
 	// equation
 	v3d direction, position;
 };
