@@ -6,3 +6,8 @@
 .LSOverride
 a.out.dSYM/
 
+
+
+*.*
+!*.cpp
+!*.h
