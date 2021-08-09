@@ -38,17 +38,18 @@ pix Scene::trace(const Ray r, int depth) {
 		return pix(1,1,1);
 	} else {
 		
+		// point of intersection
 		v3d point = r.position + r.direction * min_dist;
 
 		Material* mat = hit->get_material();
-		// assume it's a sphere so
+
 		v3d normal = hit->get_normal(point);
 
 		Ray new_ray;
 		mat->get_scatter(r,normal,point,new_ray);
 
-		// maybe have to convert to double and print the int 
-		col += mat->albedo * trace(new_ray, depth-1);
+		// emission + attenuation * (incoming)
+		col += mat->emission + mat->albedo * trace(new_ray, depth-1);
 	}
 	return col;
 }
@@ -84,6 +85,8 @@ void Scene::render() {
 	v3d d_up = cam.up;
 	d_pix.normalize();
 
+
+
 	// length of the entire thing = tan(angle/2) * distance to center
 	// just draw the triangle, this is the bisecting the iscoelenes one
 
@@ -104,7 +107,6 @@ void Scene::render() {
 		points[i][cam.height-1] = points[i-1][cam.height-1] + d_pix;
 	}
 
-
 	for (int i = cam.height-2; i >= 0; i--) {
 
 		points[0][i] = points[0][i+1] + d_up;
@@ -114,24 +116,40 @@ void Scene::render() {
 		}
 	}
 
+	// for (int i=0;i<cam.height;i++) {
+	// 	for (int j=0;j<cam.width;j++) {
+	// 		std::cerr << points[j][i] << ", ";
+	// 	}
+	// 	std::cerr << "\n";
+	// }
 
 	// should flip samples first for progressive sampling for non speed but look at difference
-	for (int i=0;i<cam.width;i++) {
-		for (int j=0;j<cam.height;j++) {
+	int pixels = cam.width * cam.height;
+	int current = 0;
+	// std::cout << current << "/" << pixels << " rendered at " << SAMPLES << " samples"; 
+	printf("%d/%d rendered at %d samples",current,pixels,SAMPLES);
+	for (int i=0;i<cam.height;i++) {
+		for (int j=0;j<cam.width;j++) {
 			for (int k = 0; k < SAMPLES; k++) {
 				// add random variation within pixel
 				v3d ray_vec = points[j][i] - cam.position + d_pix * (rand() * 1.0 / RAND_MAX * 2 - 1) + d_up * (rand() * 1.0 / RAND_MAX * 2 - 1);
 				ray_vec.normalize();
 				Ray current(cam.position,ray_vec);
 
-				img[i][j] += trace(current, 5);
+				img[j][i] += trace(current, 3);
 
 			}
+			current++;
+		}
+		printf("\033[2K\r%d/%d rendered at %d samples",current,pixels,SAMPLES);
+		// std::cout << "\033[2K\r" << current << "/" << pixels << " rendered at " << SAMPLES << " samples"; 
 			// std::cerr << "[" << img[i][j].r << " " << img[i][j].g << " " << img[i][j].b << "] ";
 			// img[i][j]/=SAMPLES;
-		}
+		
 		// std::cerr << "\n";
+	
 	}
+	std::cout << "\n";
 	// output to file & image initialization
 	std::ofstream out;
 	out.open("output/test33.ppm");

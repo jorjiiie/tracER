@@ -15,7 +15,7 @@
 #include "Materials.h"
 
 #define PI 3.14159265
-#define SAMPLES 70
+#define SAMPLES 20
 
 class Scene {
 

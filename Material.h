@@ -8,6 +8,8 @@ class Material {
 public:
 	Material();
 	Material(const pix&);
+	Material(const pix&, const pix&);
+	void set_emission(const pix&);
 	// i have no clue :(
 	// incoming, normal, point?
 	virtual void get_scatter(const Ray&, const v3d&, const v3d&, Ray&);

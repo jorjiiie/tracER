@@ -95,6 +95,8 @@ struct v3d {
 };
 
 std::ostream& operator<<(std::ostream& stream, const v3d& vec) {
-	stream << "[v3d (" << vec.x << ", " << vec.y << ", " << vec.z << ")]";
+	// for python
+	stream << "[" << vec.x << "," << vec.y << "," << vec.z << "]";
+	// stream << "[v3d (" << vec.x << ", " << vec.y << ", " << vec.z << ")]";
 	return stream;
 }
