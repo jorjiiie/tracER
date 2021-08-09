@@ -11,50 +11,6 @@ Scene::Scene(Camera c, std::vector<tObject*> objs) {
 	scene_objects = objs;
 }
 
-v3d Scene::uniform_hemisphere(const v3d& loc, const v3d& normal, const v3d& center) {
-	// we do this by literally guessing LOL
-	v3d direction;
-	// so uh we just take 3 random points and check if its in the unit sphere
-	// this is uniform LOL bc its in the sphere and each 'radius' has equal probablity
-	// the probablity of ray being in the sphere is pi/6 or a bit higher than 50%
-	// soooo theoretically it should be 4 or less iterations 95% of the time :) 
-
-	// apparently this is commonly used and is just a 'rejection testing'
-	do {
-		direction.x = (double) rand() / RAND_MAX * 2 - 1;
-		direction.y = (double) rand() / RAND_MAX * 2 - 1;
-		// only want up
-		// if doing transmission then we can just flip this 
-		direction.z = (double) rand() / RAND_MAX;
-
-
-		// while magnitude < 1
-	} while (direction * direction < 1);
-
-	// direction is now on the +z hemisphere
-	// align to the normal point
-	// really just need the normal?
-
-	// calculate rotation matrix here	
-
-	// LOL NOPE
-	// just return this for now LMFAO 
-	return direction;
-}
-
-v3d Scene::uniform_sphere() {
-	v3d direction;
-	
-	do {
-		direction.x = (double) rand() / RAND_MAX * 2 - 1;
-		direction.y = (double) rand() / RAND_MAX * 2 - 1;
-		direction.z = (double) rand() / RAND_MAX * 2 - 1;
-
-		// while magnitude < 1
-	} while (direction * direction < 1);
-	return direction;
-}
-
 pix Scene::trace(const Ray r, int depth) {
 
 	if (depth <= 0) 
@@ -75,7 +31,8 @@ pix Scene::trace(const Ray r, int depth) {
 	}
 
 	pix col;
-	if (hit == NULL) {
+	// no hit or clip
+	if (hit == NULL || std::abs(min_dist) < .000001) {
 		// add world color
 		// whyte		
 		return pix(1,1,1);
@@ -83,32 +40,18 @@ pix Scene::trace(const Ray r, int depth) {
 		
 		v3d point = r.position + r.direction * min_dist;
 
+		Material* mat = hit->get_material();
 		// assume it's a sphere so
 		v3d normal = hit->get_normal(point);
 
-		v3d sphere_point = normal + uniform_sphere();
-
-		Ray new_ray(point,sphere_point);
+		Ray new_ray;
+		mat->get_scatter(r,normal,point,new_ray);
 
 		// maybe have to convert to double and print the int 
-		col+= trace(new_ray, depth-1) * .5;
+		col += mat->albedo * trace(new_ray, depth-1);
 	}
 	return col;
 }
-
-// some funcs LOL
-// spaghetti code crying :(
-double clamp(double a, double mn, double mx) {
-	if (a<mn) return mn;
-	if (a>mx) return mx;
-	return a;
-}
-void print_color(std::ofstream& out, pix pixel) {
-	out << (int) (256 * clamp(pixel.r,0.0,0.9999)) << " " 
-		<< (int) (clamp(pixel.g,0.0,0.9999) * 256) << " " 
-		<< (int) (clamp(pixel.b,0.0,0.9999) * 256) << "\n";
-}
-
 
 void Scene::render() {
 
@@ -181,7 +124,7 @@ void Scene::render() {
 				ray_vec.normalize();
 				Ray current(cam.position,ray_vec);
 
-				img[i][j] += trace(current, 3);
+				img[i][j] += trace(current, 5);
 
 			}
 			// std::cerr << "[" << img[i][j].r << " " << img[i][j].g << " " << img[i][j].b << "] ";
@@ -191,13 +134,13 @@ void Scene::render() {
 	}
 	// output to file & image initialization
 	std::ofstream out;
-	out.open("output/test3.ppm");
+	out.open("output/test33.ppm");
 	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
 	for (int i=0;i<cam.height;i++)
 		for (int j=0;j<cam.width;j++) {
 			img[j][i].gamma_correct(SAMPLES);
-			print_color(out,img[j][i]);
+			tUtility::print_color(out,img[j][i]);
 		}
 
 }

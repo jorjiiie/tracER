@@ -10,9 +10,11 @@ int main() {
 
 	std::freopen("out.txt","w",stderr);
 
-	Sphere s(25,-3,5,15);
+	Sphere s(35,-5,15,15);
 
-	Sphere s2(0,105,0,98);
+	Sphere s2(0,505,0,500);
+
+	Sphere s3(35,-5,-15,15);
 
 	v3d direction(1,0,0);
 
@@ -20,7 +22,13 @@ int main() {
 
 	v3d origin(0,0,0);
 
-	Camera cam(1000,1000,origin,up,direction,90);
+	Camera cam(500,500,origin,up,direction,90);
+
+
+
+	Lambertian diffuse(pix(.5,.15,.35));
+	Lambertian green(pix(.1,.8,.4));
+	Metal shiniee(pix(.8,.8,.8),.1);
 
 	std::cout << s.get_radius() << " radius\n";
 	v3d weird(1,.1,0);
@@ -31,7 +39,11 @@ int main() {
 	std::vector<tObject*> obj;
 	obj.push_back(&s);
 	obj.push_back(&s2);
+	obj.push_back(&s3);
 
+	s.set_material(diffuse);
+	s2.set_material(green);
+	s3.set_material(shiniee);
 	Scene sc(cam,obj);
 
 	sc.render();

@@ -6,14 +6,16 @@
 #include <vector>
 #include <cmath>
 
-
+#include "tUtility.cpp"
 #include "tObject.cpp"
 #include "Camera.cpp"
 #include "Ray.cpp"
 #include "Sphere.cpp"
+#include "pix.h" 
+#include "Materials.h"
 
 #define PI 3.14159265
-#define SAMPLES 1000
+#define SAMPLES 70
 
 class Scene {
 
@@ -21,10 +23,7 @@ public:
 	Scene();
 	Scene(Camera, std::vector<tObject*>);
 	void render();
-	v3d uniform_hemisphere(const v3d&, const v3d&, const v3d&);
-	// tmp lOL
-	v3d uniform_sphere();
-	tObject* closest_intersection(Ray);
+
 	// ray traveling and the depth
 	pix trace(const Ray, int);
 private:

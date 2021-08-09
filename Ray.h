@@ -5,8 +5,10 @@ class Ray {
 public:
 
 	Ray();
-	Ray(v3d&, v3d&);
+	Ray(const v3d&, const v3d&);
+	Ray(const Ray&);
 
+	Ray& operator=(const Ray&);
 	v3d get_position() const;
 	v3d get_direction() const;
 	// equation

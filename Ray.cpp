@@ -4,8 +4,19 @@
 Ray::Ray() {
 	// for arrays lets go
 }
-Ray::Ray(v3d& pos, v3d& dir) {
+Ray::Ray(const Ray& o) {
+	position = o.position;
+	direction = o.direction;
+}
+Ray::Ray(const v3d& pos, const v3d& dir) {
 	position = pos;
 	direction = dir;
 
+}
+
+
+Ray& Ray::operator=(const Ray& r) {
+	position = r.position;
+	direction = r.direction;
+	return *this;
 }

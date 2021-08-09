@@ -12,3 +12,9 @@ bool tObject::intersect(const Ray& r, double& t) {
 v3d tObject::get_normal(const v3d& p) {
 	return v3d(0,0,0);
 }
+Material* tObject::get_material() {
+	return material;
+}
+void tObject::set_material(Material& m) {
+	material = &m;
+}
