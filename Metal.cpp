@@ -16,9 +16,7 @@ void Metal::get_scatter(const Ray& r, const v3d& normal, const v3d& p, Ray& outg
 
 	// reflection is r.d - 2*r.d P n
 
-	v3d r_proj_normal = normal * (r.direction*normal);
-
-	v3d new_direction = r.direction - r_proj_normal * 2.0;
+	v3d new_direction = r.direction - normal * (normal * r.direction  * 2.0);
 
 	if (roughness > .001) {
 		new_direction += tUtility::uniform_sphere() * roughness;

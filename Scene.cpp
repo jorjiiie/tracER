@@ -1,7 +1,6 @@
 #pragma once
 #include "Scene.h"
 
-
 Scene::Scene() {
 	// hello
 }
@@ -35,7 +34,7 @@ pix Scene::trace(const Ray r, int depth) {
 	if (hit == NULL || std::abs(min_dist) < .000001) {
 		// add world color
 		// whyte		
-		return pix(1,1,1);
+		return pix(0,0,0);
 	} else {
 		
 		// point of intersection
@@ -49,7 +48,7 @@ pix Scene::trace(const Ray r, int depth) {
 		mat->get_scatter(r,normal,point,new_ray);
 
 		// emission + attenuation * (incoming)
-		col += mat->emission + mat->albedo * trace(new_ray, depth-1);
+		col +=  mat->emission + mat->albedo * trace(new_ray, depth-1);
 	}
 	return col;
 }
@@ -127,7 +126,8 @@ void Scene::render() {
 	int pixels = cam.width * cam.height;
 	int current = 0;
 	// std::cout << current << "/" << pixels << " rendered at " << SAMPLES << " samples"; 
-	printf("%d/%d rendered at %d samples",current,pixels,SAMPLES);
+	clock_t start = clock();
+	fprintf(stdout,"%d/%d rendered at %d samples. ",current,pixels,SAMPLES);
 	for (int i=0;i<cam.height;i++) {
 		for (int j=0;j<cam.width;j++) {
 			for (int k = 0; k < SAMPLES; k++) {
@@ -136,12 +136,14 @@ void Scene::render() {
 				ray_vec.normalize();
 				Ray current(cam.position,ray_vec);
 
-				img[j][i] += trace(current, 3);
+				img[j][i] += trace(current, MAX_BOUNCES);
 
 			}
 			current++;
 		}
-		printf("\033[2K\r%d/%d rendered at %d samples",current,pixels,SAMPLES);
+		double elapsed = (double) (clock() - start) / CLOCKS_PER_SEC;
+		fprintf(stdout,"\r%d/%d pixels rendered at %d samples (%1.0f%%) Elapsed time is %.1f seconds, estimated %.1f seconds left",current,pixels,SAMPLES, (double)current/pixels*100, elapsed, elapsed*pixels/current - elapsed);
+		std::fflush(stdout);
 		// std::cout << "\033[2K\r" << current << "/" << pixels << " rendered at " << SAMPLES << " samples"; 
 			// std::cerr << "[" << img[i][j].r << " " << img[i][j].g << " " << img[i][j].b << "] ";
 			// img[i][j]/=SAMPLES;

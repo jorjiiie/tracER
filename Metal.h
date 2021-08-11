@@ -3,7 +3,7 @@
 #include "Material.cpp"
 
 class Metal : public Material {
-	// diffuse
+	// should call this glossy
 public:
 	Metal(const pix&, double);
 	virtual void get_scatter(const Ray&, const v3d&, const v3d&, Ray&);

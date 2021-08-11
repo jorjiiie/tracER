@@ -10,6 +10,10 @@ int main() {
 
 	std::freopen("out.txt","w",stderr);
 
+	// search is O(n) for now lol
+	// with bvh it will go down to O(logn) i think
+
+
 	Sphere s(35,-5,15,15);
 
 	Sphere s2(0,505,0,500);
@@ -18,9 +22,9 @@ int main() {
 
 	Sphere s4(0,0,0,5000);
 
+	Sphere s5(25,-60,0,10);
 
-	Sphere s5(25,-50,0,5);
-
+	Sphere s6(15,0,-15,5);
 
 	v3d direction(1,0,0);
 
@@ -28,15 +32,16 @@ int main() {
 
 	v3d origin(0,0,0);
 
-	Camera cam(300,200,origin,up,direction,90);
+	Camera cam(400,300,origin,up,direction,90);
 
 
 
 	Lambertian BLACK(pix(0,0,0));
 	Lambertian diffuse(pix(.5,.15,.35));
 	Lambertian green(pix(.1,.8,.4));
-	Lambertian light(pix(1,1,1));
-	Metal shiniee(pix(.5,.5,.5),.3);
+	Lambertian light(pix(1.5,1.5,1.5));
+	Lambertian grey(pix(.6,.6,.6));
+	Metal shiniee(pix(1,1,1),0.0);
 
 
 	light.set_emission(pix(2,2,2));	
@@ -55,13 +60,16 @@ int main() {
 	obj.push_back(&s3);
 	obj.push_back(&s4);
 	obj.push_back(&s5);
+	obj.push_back(&s6);
 
 	s.set_material(diffuse);
 	s2.set_material(green);
 	s3.set_material(shiniee);
 	s4.set_material(BLACK);
 	s5.set_material(light);
+	s6.set_material(shiniee);
 
+	shiniee.set_emission(pix(0,0,0));
 	Scene sc(cam,obj);
 
 	sc.render();
