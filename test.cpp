@@ -1,6 +1,6 @@
 #include "Scene.cpp"
 
-int main() {
+int main(int argc, char * argv[]) {
 
 
 	// for (int i=0;i<50;i++) {
@@ -32,7 +32,7 @@ int main() {
 
 	v3d origin(0,0,0);
 
-	Camera cam(400,300,origin,up,direction,90);
+	Camera cam(1920,1200,origin,up,direction,90);
 
 
 
@@ -41,8 +41,8 @@ int main() {
 	Lambertian green(pix(.1,.8,.4));
 	Lambertian light(pix(1.5,1.5,1.5));
 	Lambertian grey(pix(.6,.6,.6));
-	Metal shiniee(pix(1,1,1),0.0);
-
+	Metal shiniee(pix(1,1,1),0.1);
+	Metal perfect(pix(1,1,1),0);
 
 	light.set_emission(pix(2,2,2));	
 
@@ -67,12 +67,13 @@ int main() {
 	s3.set_material(shiniee);
 	s4.set_material(BLACK);
 	s5.set_material(light);
-	s6.set_material(shiniee);
+	s6.set_material(perfect);
 
 	shiniee.set_emission(pix(0,0,0));
 	Scene sc(cam,obj);
 
-	sc.render();
+	if (argc==1)sc.render();
+	else sc.multi_render();
 	std::cout << s.get_radius() << " radius\n";
 
 	// std::cout << cr << "\n";
