@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
 
 	v3d origin(0,0,0);
 
-	Camera cam(1920,1200,origin,up,direction,90);
+	Camera cam(300,200,origin,up,direction,90,10);
 
 
 
@@ -48,7 +48,6 @@ int main(int argc, char * argv[]) {
 
 
 
-	std::cout << s.get_radius() << " radius\n";
 	v3d weird(1,.1,0);
 	weird.normalize();
 	Ray r(origin,weird);
@@ -72,9 +71,8 @@ int main(int argc, char * argv[]) {
 	shiniee.set_emission(pix(0,0,0));
 	Scene sc(cam,obj);
 
-	if (argc==1)sc.render();
+	if (argc>1)sc.render();
 	else sc.multi_render();
-	std::cout << s.get_radius() << " radius\n";
 
 	// std::cout << cr << "\n";
 	// std::cout << cam << "\n";

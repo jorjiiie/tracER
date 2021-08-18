@@ -6,6 +6,14 @@
 #include "pix.h"
 
 namespace tUtility {
+	double random() {
+		return rand() * 1.0 / RAND_MAX;
+	}
+	double rand_range(double a, double b) {
+		if (b<a) std::swap(a,b);
+		// scale rand to whatever
+		return tUtility::random()  * (b-a) + a;
+	}
 	v3d uniform_sphere() {
 		v3d direction;
 		

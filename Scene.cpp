@@ -74,9 +74,22 @@ void Scene::multi_render_main(std::vector<std::vector<v3d> >& points, std::vecto
 			if (rendered[j][i]!=t_id) continue;
 			for (int k = 0; k < SAMPLES; k++) {
 
-				// add random variation within pixel
-				v3d ray_vec = ray_base + d_pix * (rand() * 1.0 / RAND_MAX * 2 - 1) + d_up * (rand() * 1.0 / RAND_MAX * 2 - 1);
-				Ray current(cam.position,ray_vec.normalize());
+				v3d ray_vec = points[j][i] - cam.position + d_pix * tUtility::rand_range(-1,1) + d_up * tUtility::rand_range(-1,1);
+				ray_vec.normalize();
+
+				v3d offset(0,0,0);
+				v3d ray_origin = cam.position;
+				if (cam.apeture>0.01) {
+					do {
+						offset.x = tUtility::random();
+						offset.y = tUtility::random();
+					}
+					while (offset*offset > 1);
+					ray_origin += cam.up * offset.x + cam.direction.cross(cam.up) * offset.y;
+					// std::cerr << ray_origin << "\n";
+				}
+
+				Ray current(ray_origin,ray_vec);
 
 				img[j][i] += trace(current, MAX_BOUNCES);
 			}
@@ -85,7 +98,8 @@ void Scene::multi_render_main(std::vector<std::vector<v3d> >& points, std::vecto
 		if (completed[i] == thread_count) {
 			int current = cam.width*(i+1);
 			double elapsed = (double)(clock() - start) / CLOCKS_PER_SEC / thread_count;
-			fprintf(stdout,"\r%d/%d pixels rendered at %d samples (%1.0f%%) Elapsed time is %.1f seconds, estimated %.1f seconds left",current,pixels,SAMPLES, (double)current/pixels*100, elapsed, elapsed*pixels/current - elapsed);
+			if (!DEBUG_MODE) fprintf(stdout,"\r%d/%d pixels rendered at %d samples (%1.0f%%) Elapsed time is %.1f seconds, estimated %.1f seconds left",current,pixels,SAMPLES, (double)current/pixels*100, elapsed, elapsed*pixels/current - elapsed);
+			else fprintf(stdout, "\r%dx%d@%d %d%% %.1f %.1f ",cam.width,cam.height,SAMPLES,(int)(current *100.0/ pixels), elapsed, elapsed*pixels/current - elapsed);
 			fflush(stdout);
 		}	
 	}
@@ -152,10 +166,8 @@ void Scene::multi_render() {
 	for (auto& t1 : threads) {
 		t1.join();
 	}
-
-	std::cout << (double) (clock()-start) / CLOCKS_PER_SEC / thread_max<< " seconds\n";
 	std::ofstream out;
-	out.open("output/test33.ppm");
+	out.open("output/test34.ppm");
 	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
 	for (int i=0;i<cam.height;i++)
@@ -245,9 +257,24 @@ void Scene::render() {
 		for (int j=0;j<cam.width;j++) {
 			for (int k = 0; k < SAMPLES; k++) {
 				// add random variation within pixel
-				v3d ray_vec = points[j][i] - cam.position + d_pix * (rand() * 1.0 / RAND_MAX * 2 - 1) + d_up * (rand() * 1.0 / RAND_MAX * 2 - 1);
+				v3d ray_vec = points[j][i] - cam.position + d_pix * tUtility::rand_range(-1,1) + d_up * tUtility::rand_range(-1,1);
 				ray_vec.normalize();
-				Ray current(cam.position,ray_vec);
+
+				// change for apeture size
+				v3d offset(0,0,0);
+				v3d ray_origin = cam.position;
+				if (cam.apeture>0.01) {
+					std::cout << "hello\n";
+					do {
+						offset.x = tUtility::random();
+						offset.y = tUtility::random();
+					}
+					while (offset*offset > 1);
+					ray_origin += cam.up * offset.x + cam.direction.cross(cam.up) * offset.y;
+					std::cerr << ray_origin << "\n";
+				}
+
+				Ray current(ray_origin,ray_vec);
 
 				img[j][i] += trace(current, MAX_BOUNCES);
 
