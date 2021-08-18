@@ -4,7 +4,7 @@ Camera::Camera() {
 	// why do i make default constructors
 }
 
-Camera::Camera(int w, int h, v3d pos, v3d up, v3d target, double angle, double apeture) {
+Camera::Camera(int w, int h, v3d pos, v3d up, v3d target, double angle, double apeture, double focus_length) {
 	// im not dealing with odd dimensions 
 	// round down
 	width = w & 0xfffffffe;
@@ -17,6 +17,7 @@ Camera::Camera(int w, int h, v3d pos, v3d up, v3d target, double angle, double a
 	this->angle = angle;
 
 	this->apeture = apeture;
+	this->focus = focus_length;
 }
 
 

@@ -54,7 +54,7 @@ pix Scene::trace(const Ray r, int depth) {
 }
 
 // multithreaded 
-void Scene::multi_render_main(std::vector<std::vector<v3d> >& points, std::vector<std::vector<pix> >& img, std::vector<std::vector<int> >& rendered, v3d& d_pix, v3d& d_up, int t_id, std::vector<int>& completed, int thread_count) {
+void Scene::render_main(std::vector<std::vector<v3d> >& points, std::vector<std::vector<pix> >& img, std::vector<std::vector<int> >& rendered, v3d& d_pix, v3d& d_up, int t_id, std::vector<int>& completed, int thread_count) {
 	// this will be weird lol but its fine
 	clock_t start = clock();
 	int pixels = cam.width*cam.height;
@@ -85,8 +85,8 @@ void Scene::multi_render_main(std::vector<std::vector<v3d> >& points, std::vecto
 						offset.y = tUtility::random();
 					}
 					while (offset*offset > 1);
-					ray_origin += cam.up * offset.x + cam.direction.cross(cam.up) * offset.y;
-					// std::cerr << ray_origin << "\n";
+					offset *= cam.apeture;
+					ray_origin += d_up * offset.x + d_pix * offset.y;
 				}
 
 				Ray current(ray_origin,ray_vec);
@@ -105,7 +105,7 @@ void Scene::multi_render_main(std::vector<std::vector<v3d> >& points, std::vecto
 	}
 }
 
-void Scene::multi_render() {
+void Scene::render() {
 
 	// see render() for details
 
@@ -118,13 +118,14 @@ void Scene::multi_render() {
 		v.resize(cam.height);
 	}
 
-	v3d center_scene = cam.position + cam.direction * 69;
+	// scaled to focus distance
+	v3d center_scene = cam.position + cam.direction * cam.focus;
 
 	v3d d_pix = cam.direction.cross(cam.up);
 	v3d d_up = cam.up;
 	d_pix.normalize();
 
-	double width = tan(cam.angle * PI/360.0) * 69 * 2;
+	double width = tan(cam.angle * PI/360.0) * cam.focus * 2;
 
 	d_pix *= width / (cam.width-1);
 	d_up *= width / (cam.width-1);
@@ -145,7 +146,6 @@ void Scene::multi_render() {
 			points[j][i] = points[j-1][i] + d_pix;
 		}
 	}
-
 	// locks
 	// hopefully it works
 	std::vector<std::vector<int> > rendered(cam.width);
@@ -160,143 +160,15 @@ void Scene::multi_render() {
 
 	clock_t start = clock();
 
+	// thread_max = 1;
 	for (int i=0;i<thread_max;i++) {
-		threads.push_back(std::thread(&Scene::multi_render_main,this,std::ref(points),std::ref(img),std::ref(rendered),std::ref(d_pix),std::ref(d_up),i+1,std::ref(completed),thread_max));
+		threads.push_back(std::thread(&Scene::render_main,this,std::ref(points),std::ref(img),std::ref(rendered),std::ref(d_pix),std::ref(d_up),i+1,std::ref(completed),thread_max));
 	}
 	for (auto& t1 : threads) {
 		t1.join();
 	}
 	std::ofstream out;
 	out.open("output/test34.ppm");
-	out << "P3 " << cam.width << " " << cam.height << " 255\n";
-
-	for (int i=0;i<cam.height;i++)
-		for (int j=0;j<cam.width;j++) {
-			img[j][i].gamma_correct(SAMPLES);
-			tUtility::print_color(out,img[j][i]);
-		}
-
-}
-
-void Scene::render() {
-
-	// both of these should be switched but i can't be bothered now
-	// cache friendly would be other way aroudn LOL but its fine for now
-	// we get to do some testing later
-	std::vector<pix> img[cam.width];
-	for (std::vector<pix>& v : img) {
-		v.resize(cam.height);
-	}
-
-	// projected big triangle points
-	std::vector<v3d> points[cam.width];
-	for (std::vector<v3d>& v : points) {
-		v.resize(cam.height);
-	}
-	// now project a big rectangle through camera and shoot rays through the pixels
-
-	// center of the scene, and is 69 units away from the camera for no reason whatsoever
-	// it doesn't make a difference bc the ray intersection doesn't matter for magnitude
-	// will just have bigger numbers :c
-	v3d center_scene = cam.position + cam.direction * 69;
-
-	// delta x,y,z per pixel sideways
-	// for a pixel, moving right 1 pix is + d_pix
-	// moving up 1 pix is + d_up
-
-	// we live in a right hand priviledged society
-	v3d d_pix = cam.direction.cross(cam.up);
-	v3d d_up = cam.up;
-	d_pix.normalize();
-
-
-
-	// length of the entire thing = tan(angle/2) * distance to center
-	// just draw the triangle, this is the bisecting the iscoelenes one
-
-	// converting to radians :(((
-	double width = tan(cam.angle * PI/360.0) * 69 * 2;
-
-	// now scale d_pix and d_up (one pixel is width/(cam.width-1)^2 units)
-	d_pix *= width / (cam.width-1);
-	d_up *= width / (cam.width-1);
-
-	// now we go to the low, left thing
-	v3d lower_left = center_scene - (d_pix * (cam.width/2)) - (d_up * (cam.height/2));
-	
-	points[0][cam.height-1]=lower_left;
-
-	// fill in bottom row
-	for (int i = 1; i < cam.width; i++) {
-		points[i][cam.height-1] = points[i-1][cam.height-1] + d_pix;
-	}
-
-	for (int i = cam.height-2; i >= 0; i--) {
-
-		points[0][i] = points[0][i+1] + d_up;
-
-		for (int j = 1; j < cam.width; j++) {
-			points[j][i] = points[j-1][i] + d_pix;
-		}
-	}
-
-	// for (int i=0;i<cam.height;i++) {
-	// 	for (int j=0;j<cam.width;j++) {
-	// 		std::cerr << points[j][i] << ", ";
-	// 	}
-	// 	std::cerr << "\n";
-	// }
-
-	// should flip samples first for progressive sampling for non speed but look at difference
-	int pixels = cam.width * cam.height;
-	int current = 0;
-	// std::cout << current << "/" << pixels << " rendered at " << SAMPLES << " samples"; 
-	clock_t start = clock();
-	fprintf(stdout,"%d/%d rendered at %d samples. ",current,pixels,SAMPLES);
-	for (int i=0;i<cam.height;i++) {
-		for (int j=0;j<cam.width;j++) {
-			for (int k = 0; k < SAMPLES; k++) {
-				// add random variation within pixel
-				v3d ray_vec = points[j][i] - cam.position + d_pix * tUtility::rand_range(-1,1) + d_up * tUtility::rand_range(-1,1);
-				ray_vec.normalize();
-
-				// change for apeture size
-				v3d offset(0,0,0);
-				v3d ray_origin = cam.position;
-				if (cam.apeture>0.01) {
-					std::cout << "hello\n";
-					do {
-						offset.x = tUtility::random();
-						offset.y = tUtility::random();
-					}
-					while (offset*offset > 1);
-					ray_origin += cam.up * offset.x + cam.direction.cross(cam.up) * offset.y;
-					std::cerr << ray_origin << "\n";
-				}
-
-				Ray current(ray_origin,ray_vec);
-
-				img[j][i] += trace(current, MAX_BOUNCES);
-
-			}
-			current++;
-		}
-		double elapsed = (double) (clock() - start) / CLOCKS_PER_SEC;
-		fprintf(stdout,"\r%d/%d pixels rendered at %d samples (%1.0f%%) Elapsed time is %.1f seconds, estimated %.1f seconds left",current,pixels,SAMPLES, (double)current/pixels*100, elapsed, elapsed*pixels/current - elapsed);
-		std::fflush(stdout);
-		// std::cout << "\033[2K\r" << current << "/" << pixels << " rendered at " << SAMPLES << " samples"; 
-			// std::cerr << "[" << img[i][j].r << " " << img[i][j].g << " " << img[i][j].b << "] ";
-			// img[i][j]/=SAMPLES;
-		
-		// std::cerr << "\n";
-	
-	}
-	std::cout << "\n";
-
-
-	// output to file & image initialization
-	std::ofstream out;
-	out.open("output/test33.ppm");
 	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
 	for (int i=0;i<cam.height;i++)
