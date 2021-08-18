@@ -160,7 +160,6 @@ void Scene::render() {
 
 	clock_t start = clock();
 
-	// thread_max = 1;
 	for (int i=0;i<thread_max;i++) {
 		threads.push_back(std::thread(&Scene::render_main,this,std::ref(points),std::ref(img),std::ref(rendered),std::ref(d_pix),std::ref(d_up),i+1,std::ref(completed),thread_max));
 	}
