@@ -11,6 +11,7 @@ Ray::Ray(const Ray& o) {
 Ray::Ray(const v3d& pos, const v3d& dir) {
 	position = pos;
 	direction = dir;
+	direction.normalize();
 
 }
 

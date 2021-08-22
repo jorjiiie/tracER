@@ -1,5 +1,25 @@
 #include "Scene.cpp"
 
+void test() {
+	Rectangle rect(0,5,0,5,-5,3);
+	v3d o(2,2,0);
+	v3d direc(0.3,.19,-.45);
+	direc.normalize();
+	std::cout << direc << "\n";
+
+	Ray r(o,direc);
+
+	double t;
+	if (rect.intersect(r,t)) {
+		std::cout << t << "\n";
+	}
+	v3d p = r.direction*t + r.position;
+	std::cout << "normal: " << rect.get_normal(p);
+
+	std::cout << "DOT: " << rect.get_normal(o) * r.direction << "\n";
+	std::cout << rect.get_normal(o);
+
+}
 int main(int argc, char * argv[]) {
 
 
@@ -13,7 +33,8 @@ int main(int argc, char * argv[]) {
 	// search is O(n) for now lol
 	// with bvh it will go down to O(logn) i think
 
-
+	test();
+	return 0;
 	Sphere s(35,-5,15,15);
 
 	Sphere s2(0,505,0,500);
@@ -25,6 +46,8 @@ int main(int argc, char * argv[]) {
 	Sphere s5(25,-60,0,10);
 
 	Sphere s6(15,0,-15,5);
+
+	Rectangle rect(0,5,0,5,10,2);
 
 	v3d direction(1,0,0);
 
@@ -60,6 +83,7 @@ int main(int argc, char * argv[]) {
 	obj.push_back(&s4);
 	obj.push_back(&s5);
 	obj.push_back(&s6);
+	obj.push_back(&rect);
 
 	s.set_material(diffuse);
 	s2.set_material(green);
@@ -67,6 +91,7 @@ int main(int argc, char * argv[]) {
 	s4.set_material(BLACK);
 	s5.set_material(light);
 	s6.set_material(perfect);
+	rect.set_material(light);
 
 	shiniee.set_emission(pix(0,0,0));
 	Scene sc(cam,obj);

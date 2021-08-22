@@ -27,7 +27,9 @@ struct v3d {
 		z=o.z;
 		return *this;
 	}
-
+	v3d operator-() const {
+		return v3d(-x,-y,-z);
+	}
 
 	v3d operator+(const v3d& o) const {
 		v3d tmp = *this;
@@ -85,10 +87,16 @@ struct v3d {
 		z /= magnitude;
 		return *this;
 	}
-	v3d project(const v3d& o) {
+	v3d project(const v3d& o) const {
 		// projection what else is there
 		v3d tmp = o;
 		return tmp*((*this * o)/(o*o));
+	}
+	bool operator==(const v3d& o) const {
+		if (abs(x-o.x) > .0001) return false;
+		if (abs(y-o.y) > .0001) return false;
+		if (abs(z-o.z) > .0001) return false;
+		return true;
 	}
 
 

@@ -69,5 +69,5 @@ bool Sphere::intersect(const Ray& r, double& t) {
 
 v3d Sphere::get_normal(const v3d& p) {
 	// vector center->p is p-center, and we normalize it because we r cool 
-	return (p-position).normalize();
+	return (position-p).normalize();
 }
