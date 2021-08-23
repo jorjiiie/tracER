@@ -4,17 +4,64 @@
 Scene::Scene() {
 	// hello
 }
-
+double TOTAL_DEP;
 Scene::Scene(Camera c, std::vector<tObject*> objs) {
 	cam = c;
 	scene_objects = objs;
 }
+pix Scene::rrtrace(const Ray r, int depth, double p) {
+	double probability = 1;
+	if (depth <= 0) {
+		double rnd = tUtility::random();
+		if (rnd <= .1) {
+			TOTAL_DEP += (MAX_BOUNCES - depth);
+			return pix(0,0,0);
+		}
+		probability = p*.9;
+	}
+	tObject* hit = NULL;
 
+	double min_dist = 6942000.0;
+	for (tObject* o : scene_objects) {
+		double t;
+		if (o->intersect(r,t) && std::abs(t) > 0.1) {
+			if (t < min_dist) {
+				hit = o;
+				min_dist = t;
+			}
+		}
+	}
+	// no hit or clip
+	if (hit == NULL || std::abs(min_dist) < .000001) {
+		// add world color
+		// whyte
+		TOTAL_DEP += (MAX_BOUNCES - depth);	
+		return pix(0,0,0);
+	} else {
+		// point of intersection
+		v3d point = r.position + r.direction * min_dist;
+
+		Material* mat = hit->get_material();
+
+		v3d normal = hit->get_normal(point);
+
+		// flip normal if the wrong side
+		// since the ray points in the incoming then its if > 90 degrees its good
+		if (normal * r.direction > 0) normal = -normal;
+
+		Ray new_ray;
+		mat->get_scatter(r,normal,point,new_ray);
+		// emission + attenuation * (incoming)
+
+		return (mat->emission + mat->albedo * rrtrace(new_ray, depth-1,probability)) * probability;
+	}
+}
 pix Scene::trace(const Ray r, int depth) {
 
-	if (depth <= 0) 
+	if (depth<=0) {
+		TOTAL_DEP += (MAX_BOUNCES - depth);
 		return pix(0,0,0);
-
+	}
 	// default to diffuse for now
 	tObject* hit = NULL;
 
@@ -33,7 +80,8 @@ pix Scene::trace(const Ray r, int depth) {
 	// no hit or clip
 	if (hit == NULL || std::abs(min_dist) < .000001) {
 		// add world color
-		// whyte		
+		// whyte
+		TOTAL_DEP += (MAX_BOUNCES - depth);
 		return pix(0,0,0);
 	} else {
 		// point of intersection
@@ -98,7 +146,8 @@ void Scene::render_main(std::vector<std::vector<v3d> >& points, std::vector<std:
 
 				Ray current(ray_origin,ray_vec);
 
-				img[j][i] += trace(current, MAX_BOUNCES);
+				img[j][i] += rrtrace(current, MAX_BOUNCES,1.0);
+				// img[j][i] += trace(current, MAX_BOUNCES);
 			}
 		}
 		completed[i]++;
@@ -178,7 +227,7 @@ void Scene::render() {
 
 	//output image
 	std::ofstream out;
-	out.open("output/test34.ppm");
+	out.open("output/test37b.ppm");
 	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
 	for (int i=0;i<cam.height;i++)
@@ -186,7 +235,7 @@ void Scene::render() {
 			img[j][i].gamma_correct(SAMPLES);
 			tUtility::print_color(out,img[j][i]);
 		}
-
+	std::cout << "\nAverage bounces: " << TOTAL_DEP/cam.width/cam.height/SAMPLES << "\n";
 }
 void Scene::single_pass() {
 	// test and test for collisions

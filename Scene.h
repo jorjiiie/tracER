@@ -20,8 +20,8 @@
 
 
 #define PI 3.14159265
-#define SAMPLES 3000
-#define MAX_BOUNCES 7
+#define SAMPLES 750
+#define MAX_BOUNCES 8
 #define DEBUG_MODE 1
 class Scene {
 
@@ -32,6 +32,7 @@ public:
 	void render();
 	void single_pass();
 	pix trace(const Ray, int);
+	pix rrtrace(const Ray, int, double);
 private:
 	Camera cam;
 
