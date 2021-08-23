@@ -4,7 +4,6 @@
 Scene::Scene() {
 	// hello
 }
-double TOTAL_DEP;
 Scene::Scene(Camera c, std::vector<tObject*> objs) {
 	cam = c;
 	scene_objects = objs;
@@ -14,7 +13,6 @@ pix Scene::rrtrace(const Ray r, int depth, double p) {
 	if (depth <= 0) {
 		double rnd = tUtility::random();
 		if (rnd <= .1) {
-			TOTAL_DEP += (MAX_BOUNCES - depth);
 			return pix(0,0,0);
 		}
 		probability = p*.9;
@@ -35,7 +33,6 @@ pix Scene::rrtrace(const Ray r, int depth, double p) {
 	if (hit == NULL || std::abs(min_dist) < .000001) {
 		// add world color
 		// whyte
-		TOTAL_DEP += (MAX_BOUNCES - depth);	
 		return pix(0,0,0);
 	} else {
 		// point of intersection
@@ -59,10 +56,8 @@ pix Scene::rrtrace(const Ray r, int depth, double p) {
 pix Scene::trace(const Ray r, int depth) {
 
 	if (depth<=0) {
-		TOTAL_DEP += (MAX_BOUNCES - depth);
 		return pix(0,0,0);
 	}
-	// default to diffuse for now
 	tObject* hit = NULL;
 
 	double min_dist = 6942000.0;
@@ -77,11 +72,7 @@ pix Scene::trace(const Ray r, int depth) {
 	}
 
 	pix col;
-	// no hit or clip
 	if (hit == NULL || std::abs(min_dist) < .000001) {
-		// add world color
-		// whyte
-		TOTAL_DEP += (MAX_BOUNCES - depth);
 		return pix(0,0,0);
 	} else {
 		// point of intersection
@@ -127,7 +118,7 @@ void Scene::render_main(std::vector<std::vector<v3d> >& points, std::vector<std:
 			if (rendered[j][i]!=t_id) continue;
 			for (int k = 0; k < SAMPLES; k++) {
 
-				v3d ray_vec = points[j][i] - cam.position + d_pix * tUtility::rand_range(-1,1) + d_up * tUtility::rand_range(-1,1);
+				v3d ray_vec = ray_base + d_pix * tUtility::rand_range(-1,1) + d_up * tUtility::rand_range(-1,1);
 				ray_vec.normalize();
 
 				v3d offset(0,0,0);
@@ -235,7 +226,6 @@ void Scene::render() {
 			img[j][i].gamma_correct(SAMPLES);
 			tUtility::print_color(out,img[j][i]);
 		}
-	std::cout << "\nAverage bounces: " << TOTAL_DEP/cam.width/cam.height/SAMPLES << "\n";
 }
 void Scene::single_pass() {
 	// test and test for collisions
