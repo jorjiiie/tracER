@@ -33,7 +33,10 @@ int main(int argc, char * argv[]) {
 	// search is O(n) for now lol
 	// with bvh it will go down to O(logn) i think
 
-	test();
+	for (int i=0;i<69;i++) {
+		std::cout << rand() << "\n";
+	}
+	// test();
 	return 0;
 	Sphere s(35,-5,15,15);
 

@@ -37,4 +37,11 @@ namespace tUtility {
 			<< (int) (clamp(pixel.b,0.0,0.9999) * 256) << "\n";
 	}
 
+	v3d min(const v3d& a, const v3d& b) {
+		// new v3d with the minimum members of both
+		return v3d(std::min(a.x,b.x), std::min(a.y,b.y), std::min(a.z,b.z));
+	}
+	v3d max(const v3d& a, const v3d& b) {
+		return v3d(std::max(a.x,b.x), std::max(a.y,b.y), std::max(a.z,b.z));
+	}
 }

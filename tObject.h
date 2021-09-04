@@ -24,9 +24,14 @@ public:
 	pix get_viewport() {return viewport_col;}
 	virtual bool intersect(const Ray&, double&);
 	virtual v3d get_normal(const v3d&);
-
+	virtual void minmax_points(v3d&, v3d&);
+	virtual void bounded_children(tObject*, tObject*);
+	bool is_BVH() {return bvh;}
+	bool operator<(const tObject&) const;
 protected:
 	v3d position,rotation;
 	Material* material;
+	bool bvh = false;
 	pix viewport_col = pix(1,1,1);
 };
+

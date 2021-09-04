@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <thread>
+#include <queue>
 
 #include "tUtility.cpp"
 #include "tObject.cpp"
@@ -17,25 +18,32 @@
 #include "Sphere.cpp"
 #include "Rectangle.cpp"
 #include "pix.h" 
-
+#include "BVH_node.cpp"
 
 #define PI 3.14159265
-#define SAMPLES 750
+#define SAMPLES 100
 #define MAX_BOUNCES 8
 #define DEBUG_MODE 1
+#define FAR_CLIP 100000000
+#define NEAR_CLIP .01
+#define USING_BVH
+
 class Scene {
 
 public:
 	Scene();
 	Scene(Camera, std::vector<tObject*>);
 	void render_main(std::vector<std::vector<v3d> >&, std::vector<std::vector<pix> >&, std::vector<std::vector<int> >&, v3d&, v3d&, int, std::vector<int>&, int);
-	void render();
 	void single_pass();
+	void render();
+	tObject* BVH_intersect(const Ray&, double&);
+	tObject* intersect(const Ray&, double&);
 	pix trace(const Ray, int);
 	pix rrtrace(const Ray, int, double);
+	void build_BVH();
 private:
 	Camera cam;
 
-	// change this into shared_ptr<tObject> some time !!!
 	std::vector<tObject*> scene_objects;
+	tObject* bbox;
 };

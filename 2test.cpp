@@ -24,7 +24,7 @@ int main(int argc, char * argv[]) {
 	Rectangle r3(20,0,10,-10,-10,2);
 	Rectangle r4(20,0,-10,10,10,3);
 	Rectangle r5(20,0,-10,10,-10,3);
-	Rectangle r7(3,6,1.5,-1.5,-9.9,2);
+	Rectangle r7(2,7,2,-2,-9.9,2);
 	// Rectangle backboard(7,-7,)
 	v3d direction(1,0,0);
 
@@ -32,10 +32,10 @@ int main(int argc, char * argv[]) {
 
 	v3d origin(-8,0,0);
 
-	Camera cam(300,200,origin,up,direction,110,0,69);
+	Camera cam(400,300,origin,up,direction,110,0,69);
 
 	Lambertian BLACK(pix(0,0,0));
-	Lambertian diffuse(pix(.6,.6,.6));
+	Lambertian diffuse(pix(.2,.2,.2));
 	// Lambertian green(pix(.1,.8,.4));
 	Lambertian light(pix(1.5,1.5,1.5));
 	Lambertian grey(pix(.6,.6,.6));
@@ -44,7 +44,7 @@ int main(int argc, char * argv[]) {
 
 	Lambertian red(pix(.8,.2,.2));
 	Lambertian green(pix(.2,.8,.2));
-	light.set_emission(pix(50,50,50));	
+	light.set_emission(pix(20,20,20));	
 
 
 	std::vector<tObject*> obj;
@@ -57,9 +57,22 @@ int main(int argc, char * argv[]) {
 	obj.push_back(&r4);
 	obj.push_back(&r5);
 	obj.push_back(&r7);
+	srand(69);
 
+
+/*
+	testing bvh
+
+	Sphere *hi[690000];
+	for (int i=0;i<50000;i++) {
+		hi[i] = new Sphere(tUtility::rand_range(-10000,5),tUtility::rand_range(-10000,100),tUtility::rand_range(-1000,100),15);
+		hi[i]->set_material(perfect);
+		obj.push_back(hi[i]);
+	}
+
+*/
 	s1.set_material(diffuse);
-	s6.set_material(diffuse);
+	s6.set_material(perfect);
 	rect.set_material(diffuse);
 	r2.set_material(diffuse);
 	r3.set_material(diffuse);
@@ -76,6 +89,11 @@ int main(int argc, char * argv[]) {
 
 	sc.render();
 
+	for (tObject* o : obj) {
+		v3d min,max;
+		o->minmax_points(min,max);
+		// std::cout << "minmax: " << min << " " << max << "\n";
+	}
 	// std::cout << cr << "\n";
 	// std::cout << cam << "\n";
 	// r.intersect(s);

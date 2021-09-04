@@ -18,6 +18,7 @@ bool Rectangle::intersect(const Ray& ray, double& time_out) {
 
 	double dm[3] = {ray.direction.x, ray.direction.y, ray.direction.z};
 	double rp[3] = {ray.position.x, ray.position.y , ray.position.z};
+	// should test for parallel !!
 	int index[2];
 	if (type == 1) {
 		t = (c - ray.position.x) / ray.direction.x;
@@ -56,4 +57,38 @@ v3d Rectangle::get_normal(const v3d& p) {
 			return v3d(0,0,1);
 	}
 	return v3d(0,0,0);
+}
+void Rectangle::minmax_points(v3d& min, v3d& max) {
+	double min_a = std::min(a1,a2);
+	double max_a = std::max(a1,a2);
+
+	double min_b = std::min(b1,b2);
+	double max_b = std::max(b1,b2);
+
+	double min_points[3] = {min_a, min_b, c};
+	double max_points[3] = {max_a, max_b, c};
+
+	int x_idx, y_idx, z_idx;
+
+	switch(type) {
+		case 1:
+			x_idx=2;
+			y_idx=0;
+			z_idx=1;
+			break;
+		case 2:
+			x_idx=0;
+			y_idx=2;
+			z_idx=1;
+			break;
+		case 3:
+			x_idx=0;
+			y_idx=1;
+			z_idx=2;
+			break;
+		default:
+			return;
+	}
+	min = v3d(min_points[x_idx], min_points[y_idx], min_points[z_idx]);
+	max = v3d(max_points[x_idx], max_points[y_idx], max_points[z_idx]);
 }

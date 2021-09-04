@@ -98,6 +98,20 @@ struct v3d {
 		if (abs(z-o.z) > .0001) return false;
 		return true;
 	}
+	double operator[](const int i) const {
+		switch(i) {
+			case 0:
+				return x;
+				break;
+			case 1:
+				return y;
+				break;
+			case 2:
+				return z;
+				break;
+		}
+		return 0;
+	}
 
 
 };

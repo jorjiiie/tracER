@@ -71,3 +71,12 @@ v3d Sphere::get_normal(const v3d& p) {
 	// vector center->p is p-center, and we normalize it because we r cool 
 	return (position-p).normalize();
 }
+void Sphere::minmax_points(v3d& min, v3d& max) {
+	min.x = position.x - radius;
+	min.y = position.y - radius;
+	min.z = position.z - radius;
+
+	max.x = position.x + radius;
+	max.y = position.y + radius;
+	max.z = position.z + radius;
+}

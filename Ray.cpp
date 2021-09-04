@@ -21,3 +21,7 @@ Ray& Ray::operator=(const Ray& r) {
 	direction = r.direction;
 	return *this;
 }
+std::ostream& operator<<(std::ostream& stream, const Ray& r) {
+	stream << "[Ray: " << r.position << " " << r.direction << "]";
+	return stream;
+}

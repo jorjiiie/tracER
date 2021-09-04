@@ -11,8 +11,9 @@ public:
 	Sphere(double, double, double, double);
 	Sphere(v3d&, double);
 	double get_radius();
-	bool intersect(const Ray&, double&);
-	v3d get_normal(const v3d&);
+	virtual bool intersect(const Ray&, double&);
+	virtual v3d get_normal(const v3d&);
+	virtual void minmax_points(v3d&, v3d&);
 private:
 	double radius;
 };
