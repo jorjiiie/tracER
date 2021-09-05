@@ -68,7 +68,7 @@ int main(int argc, char * argv[]) {
 	obj.push_back(&r7);
 	obj.push_back(&backboard);
 
-	obj.push_back(&tr);
+	// obj.push_back(&tr);
 
 	srand(69);
 
@@ -84,7 +84,7 @@ int main(int argc, char * argv[]) {
 	}
 /*
 */
-	tr.set_material(light);
+	tr.set_material(red2);
 
 	backboard.set_material(diffuse);
 	s1.set_material(diffuse);
