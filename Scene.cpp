@@ -249,7 +249,7 @@ void Scene::render() {
 
 	clock_t start = clock();
 
-	thread_max = 1;
+	// thread_max = 1;
 	for (int i=0;i<thread_max;i++) {
 		threads.push_back(std::thread(&Scene::render_main,this,std::ref(points),std::ref(img),std::ref(rendered),std::ref(d_pix),std::ref(d_up),i+1,std::ref(completed),thread_max));
 	}
@@ -259,7 +259,7 @@ void Scene::render() {
 
 	//output image
 	std::ofstream out;
-	out.open("output/test37b.ppm");
+	out.open(path+filename+".ppm");
 	out << "P3 " << cam.width << " " << cam.height << " 255\n";
 
 	for (int i=0;i<cam.height;i++)
@@ -385,4 +385,10 @@ void Scene::build_BVH() {
 	std::cout << cnt << " " << scene_objects.size() << "\n";
 	*/
 }
+void Scene::add_obj(tObject* obj) {
+	scene_objects.push_back(obj);
+}
 
+void Scene::name_output(std::string name) {
+	filename = name;
+}

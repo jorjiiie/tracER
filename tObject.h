@@ -20,6 +20,7 @@ public:
 	void transform(int, int, int);
 	Material* get_material();
 	void set_material(Material& m);
+	void set_material(Material* m);
 	void set_viewport(const pix& col) {viewport_col = col;}
 	pix get_viewport() {return viewport_col;}
 	virtual bool intersect(const Ray&, double&);

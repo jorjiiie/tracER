@@ -20,7 +20,7 @@
 #include "BVH_node.cpp"
 
 #define PI 3.14159265
-#define SAMPLES 500
+#define SAMPLES 300
 #define MAX_BOUNCES 5
 #define DEBUG_MODE 1
 #define FAR_CLIP 100000000
@@ -40,9 +40,13 @@ public:
 	pix trace(const Ray, int);
 	pix rrtrace(const Ray, int, double);
 	void build_BVH();
-private:
+	void add_obj(tObject*);
+	void name_output(std::string);
+
 	Camera cam;
 
 	std::vector<tObject*> scene_objects;
 	tObject* bbox;
+	std::string path = "animation/";
+	std::string filename = "testaab";
 };

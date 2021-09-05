@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
 
 	v3d origin(-8,0,0);
 
-	Camera cam(200,150,origin,up,direction,110,0,69);
+	Camera cam(200,150,origin,up,direction,90,0,69);
 
 	Lambertian BLACK(pix(0,0,0));
 	Lambertian diffuse(pix(.2,.2,.2));
