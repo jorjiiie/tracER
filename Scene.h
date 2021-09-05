@@ -15,18 +15,17 @@
 #include "Camera.cpp"
 #include "Ray.cpp"
 #include "Materials.h"
-#include "Sphere.cpp"
-#include "Rectangle.cpp"
+#include "Shapes.h"
 #include "pix.h" 
 #include "BVH_node.cpp"
 
 #define PI 3.14159265
-#define SAMPLES 100
-#define MAX_BOUNCES 8
+#define SAMPLES 500
+#define MAX_BOUNCES 5
 #define DEBUG_MODE 1
 #define FAR_CLIP 100000000
 #define NEAR_CLIP .01
-#define USING_BVH
+
 
 class Scene {
 

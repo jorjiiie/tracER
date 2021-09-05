@@ -178,8 +178,8 @@ void Scene::render_main(std::vector<std::vector<v3d> >& points, std::vector<std:
 
 				Ray current(ray_origin,ray_vec);
 
-				img[j][i] += rrtrace(current, MAX_BOUNCES,1.0);
-				// img[j][i] += trace(current, MAX_BOUNCES);
+				// img[j][i] += rrtrace(current, MAX_BOUNCES,1.0);
+				img[j][i] += trace(current, MAX_BOUNCES);
 			}
 		}
 		completed[i]++;
@@ -249,7 +249,7 @@ void Scene::render() {
 
 	clock_t start = clock();
 
-	// thread_max = 1;
+	thread_max = 1;
 	for (int i=0;i<thread_max;i++) {
 		threads.push_back(std::thread(&Scene::render_main,this,std::ref(points),std::ref(img),std::ref(rendered),std::ref(d_pix),std::ref(d_up),i+1,std::ref(completed),thread_max));
 	}
@@ -342,6 +342,9 @@ void Scene::single_pass() {
 void Scene::build_BVH() {
 	// uses the list of tobjects and then builds bvh
 
+	// can probably use different scoring algos to build better bvh and make it array based rather than pointer based
+	// but thats too much work for now
+	// will implement for a speed improvement :)
 	std::sort(scene_objects.begin(),scene_objects.end());
 	std::queue<tObject*> q;
 	for (tObject* o : scene_objects) q.push(o);

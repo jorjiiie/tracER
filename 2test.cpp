@@ -25,14 +25,14 @@ int main(int argc, char * argv[]) {
 	Rectangle r4(20,0,-10,10,10,3);
 	Rectangle r5(20,0,-10,10,-10,3);
 	Rectangle r7(2,7,2,-2,-9.9,2);
-	// Rectangle backboard(7,-7,)
+	Rectangle backboard(-100,100,-100,100,-10,1);
 	v3d direction(1,0,0);
 
 	v3d up(0,-1,0);
 
 	v3d origin(-8,0,0);
 
-	Camera cam(400,300,origin,up,direction,110,0,69);
+	Camera cam(200,150,origin,up,direction,110,0,69);
 
 	Lambertian BLACK(pix(0,0,0));
 	Lambertian diffuse(pix(.2,.2,.2));
@@ -46,6 +46,15 @@ int main(int argc, char * argv[]) {
 	Lambertian green(pix(.2,.8,.2));
 	light.set_emission(pix(20,20,20));	
 
+	Lambertian red2(pix(.8,.2,.2));
+	// red2.set_emission(pix(.5,.5,.5));
+
+
+	v3d v0(10,-6,-6);
+	v3d v1(10,-6,6);
+	v3d v2(10,3,0);
+
+	Triangle tr(v0,v1,v2);
 
 	std::vector<tObject*> obj;
 
@@ -57,11 +66,15 @@ int main(int argc, char * argv[]) {
 	obj.push_back(&r4);
 	obj.push_back(&r5);
 	obj.push_back(&r7);
+	obj.push_back(&backboard);
+
+	obj.push_back(&tr);
+
 	srand(69);
 
 
 /*
-	testing bvh
+	//testing bvh
 
 	Sphere *hi[690000];
 	for (int i=0;i<50000;i++) {
@@ -69,8 +82,11 @@ int main(int argc, char * argv[]) {
 		hi[i]->set_material(perfect);
 		obj.push_back(hi[i]);
 	}
-
+/*
 */
+	tr.set_material(light);
+
+	backboard.set_material(diffuse);
 	s1.set_material(diffuse);
 	s6.set_material(perfect);
 	rect.set_material(diffuse);
@@ -84,10 +100,14 @@ int main(int argc, char * argv[]) {
 	r3.set_viewport(pix(0,0,1));
 	r4.set_viewport(pix(.5,.5,0));
 	r5.set_viewport(pix(0,.5,.5));
+	
+	tr.set_viewport(pix(1,.5,0));
+
 	shiniee.set_emission(pix(0,0,0));
 	Scene sc(cam,obj);
 
 	sc.render();
+	// sc.single_pass();
 
 	for (tObject* o : obj) {
 		v3d min,max;

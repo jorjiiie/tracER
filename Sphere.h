@@ -1,5 +1,5 @@
 #pragma once
-#include <iostream>
+
 #include "tObject.cpp"
 
 // light is just sphere but with big

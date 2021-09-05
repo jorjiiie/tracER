@@ -68,11 +68,11 @@ struct v3d {
 		return *this;
 	}
 
-	v3d cross(v3d& o) {
+	v3d cross(const v3d& o) const {
 		//cross product
 		v3d cp;
 		cp.x = this->y * o.z - this->z * o.y;
-		cp.y = this->x * o.z - this->z * o.x;
+		cp.y = this->z * o.x - this->x * o.z;
 		cp.z = this->x * o.y - this->y * o.x;
 
 		return cp;
